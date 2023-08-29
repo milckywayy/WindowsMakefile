@@ -15,8 +15,9 @@ public:
     Makefile(std::vector<Target*> *targets);
     Makefile(std::vector<Target*> *targets, std::vector<std::string> *selectedTargets);
     bool isTarget(std::string dependency);
-    int runTarget(Target *target);
-    int run();
+    bool isTargetSelected(Target *target);
+    void runTarget(Target *target);
+    void run();
     ~Makefile();
 };
 

@@ -14,6 +14,6 @@ time_t getFileModTime(string fileName) {
         return mod_time;
     }
     else {
-        throw new invalid_argument("File " + fileName + " does not exist");
+        throw invalid_argument("File " + fileName + " does not exist");
     }
 }

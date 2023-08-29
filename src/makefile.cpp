@@ -25,21 +25,35 @@ bool Makefile::isTarget(string dependency) {
     return false;
 }
 
-int Makefile::runTarget(Target *target) {
+bool Makefile::isTargetSelected(Target *target) {
+    for (string selected : *selectedTargets) {
+        if (selected == target->getName()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Makefile::runTarget(Target *target) {
     time_t targetModTime;
     bool upToDate = true;
 
     // Check if target is up to date
-    targetModTime = getFileModTime(target->getName());
-    for (string dependency : *(target->getDependencies())) {
-        if (targetModTime < getFileModTime(dependency)) {
-            upToDate = false;
+    try {
+        targetModTime = getFileModTime(target->getName());
+        for (string dependency : *(target->getDependencies())) {
+            if (targetModTime < getFileModTime(dependency)) {
+                upToDate = false;
+            }
         }
     }
+    catch (invalid_argument &e) {
+        upToDate = false;
+    }
 
-    if (upToDate) {
-        // Target is up to date - no need to do anything
-        return 1;
+    if (upToDate) { 
+        throw runtime_error("Target " + target->getName() + " is up to date");
     }
 
     // Update dependecy targets
@@ -57,20 +71,35 @@ int Makefile::runTarget(Target *target) {
     for (string command : *(target->getCommands())) {
         cout << "RUN!! " << command << endl;
     }
-
-    return 0;
-
 }
 
-int Makefile::run() {
+void Makefile::run() {
     if (selectedTargets == NULL) {
-        runTarget(targets->at(0));
+        try {
+            runTarget(targets->at(0));
+        }
+        catch (const runtime_error &e) {
+            cout << e.what() << endl;  
+        }
+        catch (const exception &e) {
+            cerr << e.what() << endl;
+        }
     }
     else {
-        // TODO Run selected
+        for (Target *target : *targets) {
+            if (isTargetSelected(target)) {
+                try {
+                    runTarget(target);
+                }
+                catch (const runtime_error &e) { 
+                    cout << e.what() << endl;  
+                }
+                catch (const exception &e) {
+                    cerr << e.what() << endl;
+                }
+            }
+        }
     }
-
-    return 0;
 }
 
 Makefile::~Makefile() {
