@@ -5,6 +5,8 @@
 
 using namespace std;
 
+regex TARGET_REGEX(R"(\s*([^#\s]+)\s*:\s*(.*))");
+regex COMMAND_REGEX(R"(\s*\t(.+))");
 
 vector<Target*> *readMakefile(string fileName) {
     vector<Target*> *targets = new vector<Target*>;
@@ -16,21 +18,22 @@ vector<Target*> *readMakefile(string fileName) {
     }
 
     string line;
-    string target;
-    string dependece;
-    string command;
     size_t pos;
 
     Target *newTarget = NULL;
 
     while (getline(file, line)) {
+        if (line.find('#') != string::npos) {
+            line = line.substr(0, line.find('#'));
+        }
+
         if (line.empty()) {
             continue;
         }
 
         pos = 0;
 
-        if (line[0] != '\t') {
+        if (regex_match(line, TARGET_REGEX)) {
             // Close previous target
             if (newTarget != NULL) {
                 targets->push_back(newTarget);
@@ -47,8 +50,7 @@ vector<Target*> *readMakefile(string fileName) {
                 throw invalid_argument("Invalid makefile format");
             }
 
-            target = line.substr(0, pos++);
-            newTarget = new Target(target);
+            newTarget = new Target(line.substr(0, pos++));
 
             // Read dependencies
 
@@ -58,9 +60,8 @@ vector<Target*> *readMakefile(string fileName) {
             }
 
             if (line[pos] == '\0') {
-                delete newTarget;
-                delete targets;
-                throw invalid_argument("Invalid makefile format");
+                // Seems like no dependencies were given
+                continue; 
             }
 
             size_t startPos = pos;
@@ -81,9 +82,10 @@ vector<Target*> *readMakefile(string fileName) {
                     pos++;
                 }
             }
-            newTarget->addDependence(line.substr(startPos, pos - startPos));
+            if (!line.substr(startPos, pos - startPos).empty())
+                newTarget->addDependence(line.substr(startPos, pos - startPos));
         }
-        else if (line[0] == '\t') {
+        else if (regex_match(line, COMMAND_REGEX)) {
             if (newTarget == NULL) {
                 delete targets;
                 throw invalid_argument("Invalid makefile format");
@@ -92,6 +94,11 @@ vector<Target*> *readMakefile(string fileName) {
                 // Add new command
                 newTarget->addCommand(line.substr(1, line.size() - 1));
             }
+        }
+        else {
+            // Invalid line
+            delete targets;
+            throw invalid_argument("Invalid makefile format");
         }
     }
 
