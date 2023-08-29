@@ -9,10 +9,19 @@
 using namespace std;
 
 
+const string VERSION = "1.0";
+
 int main(int argc, char **argv) {
     Makefile *makefile;
     vector<Target*> *targets;
     vector<string> selectedTargets;
+
+    for (int i = 1 ; i < argc; i++) {
+        if (string(argv[i]) == "-v" || string(argv[i]) == "--version" || string(argv[i]) == "/v" || string(argv[i]) == "/V") {
+            cout << "WindowsMakefile v" << VERSION << endl;
+            return 0;
+        }
+    }
 
     try {
         targets = readMakefile("makefile");
