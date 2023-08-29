@@ -18,6 +18,7 @@ public:
     std::string getName();
     std::vector<std::string> *getDependencies();
     std::vector<std::string> *getCommands();
+    void print();
     ~Target();
 };
 

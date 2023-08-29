@@ -1,3 +1,4 @@
+#include <iostream>
 #include "target.h"
 
 using namespace std;
@@ -27,6 +28,22 @@ vector<string> *Target::getDependencies() {
 
 vector<string> *Target::getCommands() {
     return commands;
+}
+
+void Target::print() {
+    cout << "Name: " << name << endl;
+    
+    cout << "Dependecies: ";
+    for (string s : *dependencies) {
+        cout << s << " ";
+    }  
+    cout << endl;
+
+    cout << "Commands: ";
+    for (string s : *commands) {
+        cout << s << endl;
+    }  
+    cout << endl;
 }
 
 Target::~Target() {

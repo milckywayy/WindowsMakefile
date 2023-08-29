@@ -24,8 +24,6 @@ vector<Target*> *readMakefile(string fileName) {
     Target *newTarget = NULL;
 
     while (getline(file, line)) {
-        cout << line << endl; 
-        
         if (line.empty()) {
             continue;
         }
@@ -33,6 +31,12 @@ vector<Target*> *readMakefile(string fileName) {
         pos = 0;
 
         if (line[0] != '\t') {
+            // Close previous target
+            if (newTarget != NULL) {
+                targets->push_back(newTarget);
+                newTarget = NULL;
+            }
+
             // Read new target
 
             while (line[pos] != ':' && line[pos] != '\0') {
@@ -46,8 +50,6 @@ vector<Target*> *readMakefile(string fileName) {
             target = line.substr(0, pos++);
             newTarget = new Target(target);
 
-            cout << "Target: " << target << endl;
-
             // Read dependencies
 
             // Eat spaces
@@ -56,14 +58,14 @@ vector<Target*> *readMakefile(string fileName) {
             }
 
             if (line[pos] == '\0') {
+                delete newTarget;
                 throw invalid_argument("Invalid makefile format");
             }
 
             size_t startPos = pos;
             while (pos <= line.size()) {
                 if (line[pos] == ' ' || line[pos] == '\0') {
-                    cout << "Dependence: " << line.substr(startPos, pos - startPos) << endl;
-                    newTarget->addDependence(line.substr(startPos, pos));
+                    newTarget->addDependence(line.substr(startPos, pos - startPos));
 
                     pos++;
 
@@ -81,12 +83,25 @@ vector<Target*> *readMakefile(string fileName) {
 
         }
         else if (line[0] == '\t') {
-            // Reading new command
+            if (newTarget == NULL) {
+                throw invalid_argument("Invalid makefile format");
+            }
+            else {
+                newTarget->addCommand(line);
+            }
         }
+    }
 
+    if (newTarget != NULL) {
+        targets->push_back(newTarget);
+        newTarget = NULL;
     }
 
     file.close();
+
+    for (Target *t : *targets) {
+        t->print();
+    }
 
     delete targets;
 
