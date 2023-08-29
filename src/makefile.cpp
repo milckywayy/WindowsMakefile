@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include "makefile.h"
 #include "utils.h"
 
@@ -67,9 +68,14 @@ void Makefile::runTarget(Target *target) {
         }
     }
 
-    // Run 
+    // Run commands
     for (string command : *(target->getCommands())) {
-        cout << "RUN!! " << command << endl;
+        if (system(command.c_str()) == 0) {
+            cout << command << endl;
+        }
+        else {
+            cout << "Execution failed for: '" << command << "'" << endl;
+        }
     }
 }
 
