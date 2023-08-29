@@ -39,9 +39,9 @@ void Target::print() {
     }  
     cout << endl;
 
-    cout << "Commands: ";
+    cout << "Commands:" << endl;
     for (string s : *commands) {
-        cout << s << endl;
+        cout << '\t' << s << endl;
     }  
     cout << endl;
 }

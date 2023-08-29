@@ -59,6 +59,7 @@ vector<Target*> *readMakefile(string fileName) {
 
             if (line[pos] == '\0') {
                 delete newTarget;
+                delete targets;
                 throw invalid_argument("Invalid makefile format");
             }
 
@@ -84,10 +85,12 @@ vector<Target*> *readMakefile(string fileName) {
         }
         else if (line[0] == '\t') {
             if (newTarget == NULL) {
+                delete targets;
                 throw invalid_argument("Invalid makefile format");
             }
             else {
-                newTarget->addCommand(line);
+                // Add new command
+                newTarget->addCommand(line.substr(1, line.size() - 1));
             }
         }
     }
@@ -98,12 +101,6 @@ vector<Target*> *readMakefile(string fileName) {
     }
 
     file.close();
-
-    for (Target *t : *targets) {
-        t->print();
-    }
-
-    delete targets;
 
     return targets;
 }
