@@ -64,14 +64,14 @@ vector<Target*> *readMakefile(string fileName) {
             }
 
             size_t startPos = pos;
-            while (pos <= line.size()) {
+            while (pos < line.size()) {
                 if (line[pos] == ' ' || line[pos] == '\0') {
                     newTarget->addDependence(line.substr(startPos, pos - startPos));
 
-                    pos++;
+                    pos++; 
 
                     // Eat end characters
-                    while ((line[pos] == ' ' || line[pos] == '\0') && pos <= line.size()) {
+                    while ((line[pos] == ' ') && pos < line.size()) {
                         pos++;
                     }
 
@@ -81,7 +81,7 @@ vector<Target*> *readMakefile(string fileName) {
                     pos++;
                 }
             }
-
+            newTarget->addDependence(line.substr(startPos, pos - startPos));
         }
         else if (line[0] == '\t') {
             if (newTarget == NULL) {

@@ -53,7 +53,7 @@ void Makefile::runTarget(Target *target) {
     }
 
     if (upToDate) { 
-        throw runtime_error("Target " + target->getName() + " is up to date");
+        throw runtime_error("Target '" + target->getName() + "' is up to date");
     }
 
     // Update dependecy targets

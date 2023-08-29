@@ -11,8 +11,8 @@ using namespace std;
 
 int main(int argc, char **argv) {
     Makefile *makefile;
-    vector<string> selectedTargets;
     vector<Target*> *targets;
+    vector<string> selectedTargets;
 
     try {
         targets = readMakefile("makefile");
