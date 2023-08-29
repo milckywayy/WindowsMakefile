@@ -9,6 +9,7 @@
 
 extern std::regex TARGET_REGEX;
 extern std::regex COMMAND_REGEX;
+extern std::regex EMPTY_LINE_REGEX;
 
 std::vector<Target*> *readMakefile(std::string fileName);
 

@@ -5,8 +5,10 @@
 
 using namespace std;
 
+
 regex TARGET_REGEX(R"(\s*([^#\s]+)\s*:\s*(.*))");
 regex COMMAND_REGEX(R"(\s*\t(.+))");
+regex EMPTY_LINE_REGEX(R"(^\s*$)");
 
 vector<Target*> *readMakefile(string fileName) {
     vector<Target*> *targets = new vector<Target*>;
@@ -27,7 +29,7 @@ vector<Target*> *readMakefile(string fileName) {
             line = line.substr(0, line.find('#'));
         }
 
-        if (line.empty()) {
+        if (regex_match(line, EMPTY_LINE_REGEX)) {
             continue;
         }
 
