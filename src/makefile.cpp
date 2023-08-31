@@ -70,7 +70,14 @@ void Makefile::runTarget(Target *target) {
 
     // Run commands
     for (string command : *(target->getCommands())) {
-        if (system(command.c_str()) == 0) {
+        // replacing " with ' in order to work with powershell
+        for (int i = 0; i < command.size(); i++) {
+            if (command[i] == '"') {
+                command[i] = '\'';
+            }
+        }
+
+        if (system(("powershell \"" + command + "\"").c_str()) == 0) {
             cout << command << endl;
         }
         else {

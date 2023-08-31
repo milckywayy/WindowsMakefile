@@ -9,7 +9,7 @@
 using namespace std;
 
 
-const string VERSION = "1.0";
+const string VERSION = "1.0.1";
 
 int main(int argc, char **argv) {
     Makefile *makefile;
